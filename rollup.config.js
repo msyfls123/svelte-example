@@ -1,4 +1,4 @@
-import svelte from "rollup-plugin-svelte"
+import svelte from 'rollup-plugin-svelte'
 import commonjs from "rollup-plugin-commonjs"
 import resolve from "rollup-plugin-node-resolve"
 import serve from "rollup-plugin-serve"
@@ -11,9 +11,11 @@ import livereload from "rollup-plugin-livereload"
 import sveltePreprocessor from "svelte-preprocess"
 import babel from 'rollup-plugin-babel'
 
+const hot = process.env.NODE_ENV === "development"
+
 const plugins = [
   svelte({
-    dev: process.env.NODE_ENV === "development",
+    dev: hot,
     extensions: [".svelte"],
     preprocess: sveltePreprocessor(),
   }),
@@ -26,9 +28,9 @@ const plugins = [
     dest: 'dist/index.css',
     raw: false
   }),
-  typescript({ typescript: typescriptCompiler }),
   resolve(),
   commonjs({ include: "node_modules/**" }),
+  typescript({ typescript: typescriptCompiler }),
   babel({
     extensions: [ '.js', '.mjs', '.html', '.svelte' ],
     runtimeHelpers: true,
@@ -47,6 +49,12 @@ const plugins = [
     ],
     plugins: [
       '@babel/plugin-syntax-dynamic-import',
+      [
+        '@babel/plugin-transform-runtime',
+        {
+          helpers: false,
+        }
+      ],
     ]
   }),
 ];
@@ -54,7 +62,7 @@ if (process.env.NODE_ENV === "development") {
   plugins.push(
     serve({
       contentBase: './dist',
-      open: false
+      open: true
     }),
     livereload({ watch: "./dist" })
   );

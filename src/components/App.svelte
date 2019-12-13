@@ -4,11 +4,21 @@
   $: {
     document.title = name
     fetch(`https://day.ebichu.cc/api/${name}`)
-    .then(res => res.json())
-    .then((res) => {
-      data = res
-    })
-    Promise.resolve(123).then(console.log)
+      .then(res => {
+        if (res.ok) {
+          return res
+        }
+        throw res
+      })
+      .then(res => res.json(), (err) => console.error('hhhhh', err))
+      .then(res => {
+        if (res) {
+          data = res
+        }
+      })
+    new Promise((resolve) => {
+      setTimeout(resolve.bind(null, `${name.toUpperCase()} is inputted before 3s.`), 3000)
+    }).then(console.log)
   }
 </script>
 
