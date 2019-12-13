@@ -1,0 +1,36 @@
+{
+  "name": "svelve-typescript-parcel-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "msyfls123 <msyfls123@gmail.com>",
+  "license": "MIT",
+  "browserslist": [
+    "last 1 chrome versions"
+  ],
+  "scripts": {
+    "serve": "rm -rf ./dist && NODE_ENV=development rollup --config --watch",
+    "build": "rm -rf ./dist && NODE_ENV=production rollup --config"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
+    "core-js": "3",
+    "node-sass": "^4.13.0",
+    "rollup": "^1.27.12",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-bundle-html": "^0.2.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-css-porter": "^1.0.2",
+    "rollup-plugin-livereload": "^1.0.4",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-serve": "^1.0.1",
+    "rollup-plugin-svelte": "^5.1.1",
+    "rollup-plugin-terser": "^5.1.3",
+    "rollup-plugin-typescript2": "^0.25.3",
+    "sass": "^1.23.7",
+    "svelte": "^3.16.4",
+    "svelte-preprocess": "^3.2.6",
+    "typescript": "^3.7.3"
+  }
+}
