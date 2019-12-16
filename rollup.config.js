@@ -73,9 +73,12 @@ if (process.env.NODE_ENV === "development") {
 module.exports = {
   input: "src/index.ts",
   output: {
-    file: "dist/index.js",
+    dir: "dist",
+    format: "iife",
+    globals: {
+      fetch: 'fetch'
+    },
     sourcemap: true,
-    format: "iife"
   },
   plugins
 }
