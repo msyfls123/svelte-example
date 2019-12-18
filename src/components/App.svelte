@@ -1,34 +1,73 @@
 <script lang="ts">
-  export let name: string
-  let data = {}
-  $: {
-    document.title = name
-    fetch(`https://day.ebichu.cc/api/${name}`)
+  import { Subject, from, of, } from 'rxjs'
+  import {
+    distinctUntilChanged,
+    throttleTime,
+    switchMap,
+    catchError,
+    bufferCount,
+    filter,
+    scan,
+  } from 'rxjs/operators'
+
+  function fetchDay(day: number) {
+    return fetch(`https://day.ebichu.cc/api/${day}`)
       .then(res => {
         if (res.ok) {
-          return res
+          return res.json()
         }
         throw res
       })
-      .then(res => res.json(), (err) => console.error('hhhhh', err))
-      .then(res => {
-        if (res) {
-          data = res
-        }
-      })
-    new Promise((resolve) => {
-      setTimeout(resolve.bind(null, `${name.toUpperCase()} is inputted before 3s.`), 3000)
-    }).then(console.log)
+      .then(
+        (res) => ({ type: 'success', day, data: res }),
+        (err) => { throw { err, day } }
+      )
   }
+
+  export let name: string
+  let day: number
+  const day$ = new Subject<number>()
+
+  const result$ = day$.pipe(
+    throttleTime(700),
+    filter(v => !!v),
+    distinctUntilChanged(),
+    switchMap((v) => {
+      return from(fetchDay(v)).pipe(
+        catchError(({ day, err }) => of({
+          type: 'failed',
+          error: String(err),
+          day
+        }))
+      )
+    })
+  )
+  const buffered = result$.pipe(bufferCount(5))
+  const bufferedCount = result$.pipe(scan((acc, v) => ++acc, 0))
+
+  $: {
+    document.title = `${name} - Day ${day}`
+    day$.next(day)
+  }
+
 </script>
 
 <style type="scss">
-  $pink: rgba(#112, .2);
+  $pink: rgba(247, 4, 247, 0.2);
   h1 {
     color: $pink;
   }
 </style>
 
 <h1>Hello {@html name}!!!</h1>
-<input bind:value={name}>
-<pre>{JSON.stringify(data, null, 2)}</pre>
+<input bind:value={day} type="number">
+{#if $buffered}
+  <ul>
+    {#each $buffered as item (item.day)}
+      <h3>Day: {item.day}</h3>
+      <pre>{JSON.stringify(item.data, null, 2)}</pre>
+    {/each}
+  </ul>
+{:else}
+  <p>Nothing. Need {5 - $bufferedCount % 5 || 5} times.</p>
+{/if}
