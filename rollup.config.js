@@ -5,7 +5,6 @@ import serve from "rollup-plugin-serve"
 import html from "rollup-plugin-bundle-html"
 import css from "rollup-plugin-css-porter"
 import typescript from "rollup-plugin-typescript2"
-import typescriptCompiler from "typescript"
 import { terser } from "rollup-plugin-terser"
 import livereload from "rollup-plugin-livereload"
 import sveltePreprocessor from "svelte-preprocess"
@@ -24,17 +23,22 @@ const plugins = [
     dest: "dist",
     filename: "index.html"
   }),
-  css({
-    dest: 'dist/index.css',
-    raw: false
-  }),
+  // css({
+  //   dest: 'dist/index.css',
+  //   raw: false
+  // }),
   resolve(),
-  commonjs({ include: "node_modules/**" }),
-  typescript({ typescript: typescriptCompiler }),
+  commonjs(),
+  typescript({
+    check: false,
+  }),
   babel({
     extensions: [ '.js', '.mjs', '.html', '.svelte' ],
     runtimeHelpers: true,
-    exclude: [ 'node_modules/@babel/**', 'node_modules/core-js/**' ],
+    exclude: [
+      'node_modules/@babel/**',
+      'node_modules/core-js/**',
+    ],
     presets: [
       [
         '@babel/preset-env',
@@ -58,7 +62,7 @@ const plugins = [
     ]
   }),
 ];
-if (process.env.NODE_ENV === "development") {
+if (hot) {
   plugins.push(
     serve({
       contentBase: './dist',
@@ -71,14 +75,17 @@ if (process.env.NODE_ENV === "development") {
 }
 
 module.exports = {
+  external: ['rxjs'],
   input: "src/index.ts",
   output: {
     dir: "dist",
     format: "iife",
     globals: {
-      fetch: 'fetch'
+      fetch: 'fetch',
+      rxjs: 'rxjs',
     },
-    sourcemap: true,
+    sourcemap: !hot,
   },
+  treeshake: true,
   plugins
 }

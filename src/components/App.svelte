@@ -8,6 +8,7 @@
     bufferCount,
     filter,
     scan,
+    share,
   } from 'rxjs/operators'
 
   function fetchDay(day: number) {
@@ -40,7 +41,8 @@
           day
         }))
       )
-    })
+    }),
+    share()
   )
   const buffered = result$.pipe(bufferCount(5))
   const bufferedCount = result$.pipe(scan((acc, v) => ++acc, 0))
