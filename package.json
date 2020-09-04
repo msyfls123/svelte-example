@@ -18,7 +18,7 @@
     "@babel/preset-env": "^7.7.6",
     "core-js": "3",
     "cross-env": "^6.0.3",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.13.1",
     "rollup": "^1.27.12",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-bundle-html": "^0.2.2",
